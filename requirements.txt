@@ -1,0 +1,9 @@
+streamlit
+streamlit_webrtc
+aiortc==1.2.1
+av==8.1.0
+matplotlib==3.5.1
+numpy==1.21.4
+opencv-python-headless==4.5.4.60
+pydub==0.25.1
+typing_extensions==4.0.1

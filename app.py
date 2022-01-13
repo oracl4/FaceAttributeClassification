@@ -148,7 +148,7 @@ def app_face_attributes_classification():
             faces = ()
             faces = self._face_cascade.detectMultiScale(image,
                 scaleFactor=1.3,
-                minNeighbors=4,
+                minNeighbors=5,
                 minSize=(100,100)
             )
             
@@ -156,7 +156,9 @@ def app_face_attributes_classification():
             show_image = image
             if faces is not None and len(faces) != 0:
                 faces_predictions = []
-                for (x, y, w, h) in faces:
+                for face in faces:
+                    # Get the face coordinate
+                    (x, y, w, h) = face
                     
                     # Get individual faces
                     pad_size = 50
@@ -193,14 +195,14 @@ def app_face_attributes_classification():
                     prediction = tf.nn.sigmoid(prediction)
                     prediction = tf.where(prediction < 0.5, 0, 1)
                     prediction = np.squeeze(prediction)
-                    face_prediction = [x, y, w, h, prediction]
-                    faces_predictions.append(face_prediction)
                 
-                annotated_image = self._annotate_image(image, faces_predictions)
+                    face_prediction =  np.hstack((face, prediction))
+                    faces_predictions.append(face_prediction)
 
+                annotated_image = self._annotate_image(image, faces_predictions)
                 # NOTE: This `recv` method is called in another thread,
                 # so it must be thread-safe.
-                self.result_queue.put(prediction)
+                self.result_queue.put(faces_predictions)
                 
                 show_image = annotated_image
             
@@ -218,27 +220,32 @@ def app_face_attributes_classification():
     if webrtc_ctx.state.playing:
         col1, col2, col3 = st.columns([0.2, 5, 0.2])
         col2 = col2.empty()
+        table_placeholder = st.empty()
         while True:
             if webrtc_ctx.video_processor:
                 try:
                     result = webrtc_ctx.video_processor.result_queue.get(
                         timeout=1.0
                     )
+                    result = np.array(result)
+                    average = np.average(result[:,4])
                 except queue.Empty:
                     result = None
                 
-                if(result == 0):
+                if(average < 0.5):
                     col2.image(
                         (Image.open(HERE / "./res/hat_ads.jpg")),
                         use_column_width=True,
                         width=640
-                    )
+                    )                    
                 else:
                     col2.image(
                         (Image.open(HERE / "./res/glasses_ads.jpg")),
                         use_column_width=True,
                         width=640
                     )
+
+                table_placeholder.table(result)
             else:
                 break
     
