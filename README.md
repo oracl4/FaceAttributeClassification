@@ -1,1 +1,1 @@
-This is a simple realtime webapp using tensorflow model and streamlit-webrtc to classify face attribute from webcam.
+This is a simple realtime webapp using tensorflow model and [streamlit-webrtc](https://github.com/whitphx/streamlit-webrtc) to classify face attribute (wearing hat or glasses) from webcam.
