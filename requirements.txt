@@ -7,3 +7,4 @@ numpy==1.21.4
 opencv-python-headless==4.5.4.60
 pydub==0.25.1
 typing_extensions==4.0.1
+tensorflow
