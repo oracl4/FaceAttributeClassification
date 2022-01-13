@@ -227,25 +227,28 @@ def app_face_attributes_classification():
                     result = webrtc_ctx.video_processor.result_queue.get(
                         timeout=1.0
                     )
+                    
                     result = np.array(result)
                     average = np.average(result[:,4])
+                    
+                    if(average < 0.5):
+                        col2.image(
+                            (Image.open(HERE / "./res/hat_ads.jpg")),
+                            use_column_width=True,
+                            width=640
+                        )                    
+                    else:
+                        col2.image(
+                            (Image.open(HERE / "./res/glasses_ads.jpg")),
+                            use_column_width=True,
+                            width=640
+                        )
+
+                    table_placeholder.table(result)
+                
                 except queue.Empty:
                     result = None
-                
-                if(average < 0.5):
-                    col2.image(
-                        (Image.open(HERE / "./res/hat_ads.jpg")),
-                        use_column_width=True,
-                        width=640
-                    )                    
-                else:
-                    col2.image(
-                        (Image.open(HERE / "./res/glasses_ads.jpg")),
-                        use_column_width=True,
-                        width=640
-                    )
-
-                table_placeholder.table(result)
+            
             else:
                 break
     
