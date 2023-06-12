@@ -8,3 +8,4 @@ opencv-python-headless==4.5.4.60
 pydub==0.25.1
 typing_extensions==4.0.1
 tensorflow
+protobuf==3.20.*
